@@ -24,7 +24,7 @@ public class testMeeshoSupplier extends BaseSetup{
 		hp=new meeshoHomePage(driver);
 		hp.validateHomePage();
 	}
-	
+	//Test
 	@Test
 	public void validatePageTitle1() throws Exception {
 		dp=new meeshoDashboardPage(driver);
