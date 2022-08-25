@@ -5,8 +5,8 @@
     <classes>
       <class name="webAutomation.shadowElements">
         <methods>
-          <include name="testShadowRootElement2"/>
           <include name="setBrowser"/>
+          <include name="testShadowElement"/>
           <include name="tearDown"/>
         </methods>
       </class> <!-- webAutomation.shadowElements -->
