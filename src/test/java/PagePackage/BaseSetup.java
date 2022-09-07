@@ -24,9 +24,15 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeSuite;
+
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -34,14 +40,20 @@ public class BaseSetup {
 
 	public static WebDriver driver=null;
 	public static WebDriverWait wait;
-	public static String chromeDriverLocation=System.getProperty("user.dir")+"/src/main/resources/chromedriver.exe";
 	public meeshoDashboardPage dp ;
 	public meeshoHomePage hp;
+	
+	public ExtentTest test;
+	public ExtentReports report;
 
 	public BaseSetup() throws Exception  {
 
 	}
 
+	@BeforeSuite
+	public void reportSetup() {
+		report = new ExtentReports(System.getProperty("user.dir")+"/ExtentReportResults.html");
+	}
 	@BeforeMethod
 	public void setup() throws IOException{
 		String getEnv=System.getProperty("user.dir")+"/src/test/resources/testData.properties";
@@ -63,14 +75,7 @@ public class BaseSetup {
 
 	public static void chromeDriver() {
 		WebDriverManager.chromedriver().setup();
-		
-		 ChromeOptions options = new ChromeOptions();
-         Proxy proxy = new Proxy();
-         proxy.setHttpProxy("localhost:8080");
-         proxy.setSslProxy("localhost:8080");
-         options.setHeadless(true);
-         options.setCapability(CapabilityType.PROXY, proxy);
-         driver = new ChromeDriver(options);
+         driver = new ChromeDriver();
 
 	}
 
@@ -95,6 +100,8 @@ public class BaseSetup {
 		{
 			TakesScreenshot ts=(TakesScreenshot)driver;
 			File source=ts.getScreenshotAs(OutputType.FILE);
+			report.endTest(test); 
+			test.log(LogStatus.FAIL,"Test Failed");
 			try{
 				FileHandler.copy(source, new File("./Screenshots/"+result.getName()+".png"));
 				System.out.println("Screenshot taken");
@@ -105,17 +112,29 @@ public class BaseSetup {
 			} 
 
 		}
+		else if(ITestResult.SUCCESS==result.getStatus())
+		{
+			System.out.println("Test passed");
+			report.endTest(test); 
+			test.log(LogStatus.PASS,"Test Passed");
+		}
+		
+		else if(ITestResult.SKIP==result.getStatus())
+		{
+			System.out.println("Test skipped");
+			report.endTest(test); 
+			test.log(LogStatus.SKIP,"Test Skipped");
+		}
 		driver.close();
 	}
+	
 	@AfterSuite
-	public void quitDriver() {
+	public void quitDriver(ITestResult result) {
 		System.out.println("aftersuite");
 		try {
-
-			driver.manage().timeouts().implicitlyWait(1000, TimeUnit.MILLISECONDS);
+			report.flush();
 			driver.quit();
-
-		} catch (NullPointerException | WebDriverException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
