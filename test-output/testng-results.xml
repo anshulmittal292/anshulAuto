@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results total="1" passed="1" failed="0" skipped="0">
+<testng-results ignored="1" total="2" passed="1" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2022-08-25T09:50:50Z" name="Default suite" finished-at="2022-08-25T09:51:38Z" duration-ms="48497">
+  <suite started-at="2022-09-09T15:51:44 IST" name="Default suite" finished-at="2022-09-09T15:52:02 IST" duration-ms="18232">
     <groups>
     </groups>
-    <test started-at="2022-08-25T09:50:50Z" name="Default test" finished-at="2022-08-25T09:51:38Z" duration-ms="48497">
-      <class name="webAutomation.shadowElements">
-        <test-method is-config="true" signature="setBrowser()[pri:0, instance:webAutomation.shadowElements@36cda2c2]" started-at="2022-08-25T15:20:50Z" name="setBrowser" finished-at="2022-08-25T15:21:15Z" duration-ms="25188" status="PASS">
+    <test started-at="2022-09-09T15:51:44 IST" name="Default test" finished-at="2022-09-09T15:52:02 IST" duration-ms="18232">
+      <class name="webAutomation.NewTestTest">
+        <test-method is-config="true" signature="reportSetup()[pri:0, instance:webAutomation.NewTestTest@a38c7fe]" started-at="2022-09-09T15:51:44 IST" name="reportSetup" finished-at="2022-09-09T15:51:44 IST" duration-ms="141" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- setBrowser -->
-        <test-method signature="testShadowElement()[pri:0, instance:webAutomation.shadowElements@36cda2c2]" started-at="2022-08-25T15:21:15Z" name="testShadowElement" finished-at="2022-08-25T15:21:35Z" duration-ms="20154" status="PASS">
+        </test-method> <!-- reportSetup -->
+        <test-method is-config="true" signature="setup()[pri:0, instance:webAutomation.NewTestTest@a38c7fe]" started-at="2022-09-09T15:51:44 IST" name="setup" finished-at="2022-09-09T15:51:47 IST" duration-ms="2759" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- testShadowElement -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:webAutomation.shadowElements@36cda2c2]" started-at="2022-08-25T15:21:35Z" name="tearDown" finished-at="2022-08-25T15:21:38Z" duration-ms="3145" status="PASS">
+        </test-method> <!-- setup -->
+        <test-method signature="validatePageTitle()[pri:0, instance:webAutomation.NewTestTest@a38c7fe]" started-at="2022-09-09T15:51:47 IST" name="validatePageTitle" finished-at="2022-09-09T15:52:01 IST" duration-ms="14440" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- validatePageTitle -->
+        <test-method is-config="true" signature="tearDown(org.testng.ITestResult)[pri:0, instance:webAutomation.NewTestTest@a38c7fe]" started-at="2022-09-09T15:52:01 IST" name="tearDown" finished-at="2022-09-09T15:52:02 IST" duration-ms="1002" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[[TestResult name=validatePageTitle status=SUCCESS method=NewTestTest.validatePageTitle()[pri:0, instance:webAutomation.NewTestTest@a38c7fe] output={null}]]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-      </class> <!-- webAutomation.shadowElements -->
+        <test-method is-config="true" signature="quitDriver()[pri:0, instance:webAutomation.NewTestTest@a38c7fe]" started-at="2022-09-09T15:52:02 IST" name="quitDriver" finished-at="2022-09-09T15:52:02 IST" duration-ms="0" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- quitDriver -->
+      </class> <!-- webAutomation.NewTestTest -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>

@@ -1,4 +1,4 @@
-package PagePackage;
+package WebPagePackage;
 
 
 
@@ -7,11 +7,13 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import webAutomation.basePage;
+
 public class meeshoDashboardPage extends basePage{
 	
 	public meeshoDashboardPage(WebDriver driver) throws Exception{
-		super();
-		PageFactory.initElements(driver,this);
+		super(driver,meeshoDashboardPage.class);
+		
 		}
 	
 	public void navigateTo(String url) {

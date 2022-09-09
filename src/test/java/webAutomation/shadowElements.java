@@ -18,6 +18,7 @@ public class shadowElements {
 	@BeforeTest
 	public void setBrowser() {
 		WebDriverManager.chromedriver().setup();
+	//	System.setProperty("webdriver.chrome.driver", "user.dir"+"/src/test/resources/chromedriver.exe");
 		driver = new ChromeDriver();
 		driver.manage().timeouts().implicitlyWait(20,TimeUnit.SECONDS);
 		driver.manage().window().maximize();

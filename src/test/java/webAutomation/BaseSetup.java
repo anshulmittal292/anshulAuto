@@ -1,4 +1,4 @@
-package PagePackage;
+package webAutomation;
 
 
 import java.io.File;
@@ -34,6 +34,11 @@ import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 
+import MobilePagePackage.mobileAppPage;
+import WebPagePackage.meeshoDashboardPage;
+import WebPagePackage.meeshoHomePage;
+import io.appium.java_client.MobileElement;
+import io.appium.java_client.android.AndroidDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class BaseSetup {
@@ -42,11 +47,12 @@ public class BaseSetup {
 	public static WebDriverWait wait;
 	public meeshoDashboardPage dp ;
 	public meeshoHomePage hp;
+	public mobileAppPage mobileAppPage;
 	
 	public ExtentTest test;
 	public ExtentReports report;
 
-	public BaseSetup() throws Exception  {
+	public BaseSetup() {
 
 	}
 
@@ -88,10 +94,15 @@ public class BaseSetup {
 
 	public static void androidDriver() throws MalformedURLException {
 		DesiredCapabilities caps = new DesiredCapabilities();
-		caps.setCapability("deviceName", "Pixel XL API 30");
-		caps.setCapability("udid", "emulator-5554"); //DeviceId from "adb devices"
+		caps.setCapability("deviceName", "sdk_gphone_x86");
+		caps.setCapability("deviceId", "emulator-5554"); //DeviceId from "adb devices"
 		caps.setCapability("platformName", "Android");
+		caps.setCapability("automationName", "UiAutomator2");
+		caps.setCapability("appPackage","com.google.android.permissioncontroller");
 		caps.setCapability("platformVersion", "11.0");
+		caps.setCapability("app", "C:\\Users\\anshulm\\Downloads\\APKPure_v3.17.12_apkpure.com.apk");
+        // caps.setCapability("noReset", "false");
+		driver = new AndroidDriver<MobileElement>(new URL("http://127.0.0.1:4723/wd/hub"), caps);
 	}
 
 	@AfterMethod
@@ -125,15 +136,15 @@ public class BaseSetup {
 			report.endTest(test); 
 			test.log(LogStatus.SKIP,"Test Skipped");
 		}
-		driver.close();
+		report.flush();
+		driver.quit();
 	}
 	
 	@AfterSuite
-	public void quitDriver(ITestResult result) {
+	public void quitDriver() {
 		System.out.println("aftersuite");
 		try {
-			report.flush();
-			driver.quit();
+		//	driver.quit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

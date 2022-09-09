@@ -1,4 +1,4 @@
-package PagePackage;
+package WebPagePackage;
 
 import static org.testng.Assert.assertTrue;
 
