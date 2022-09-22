@@ -1,18 +1,15 @@
 package WebPagePackage;
 
-
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 
 import webAutomation.basePage;
 
-public class meeshoDashboardPage extends basePage{
+public class DashboardPage extends basePage{
 	
-	public meeshoDashboardPage(WebDriver driver) throws Exception{
-		super(driver,meeshoDashboardPage.class);
+	public DashboardPage(WebDriver driver) throws Exception{
+		super(driver,DashboardPage.class);
 		
 		}
 	
@@ -29,16 +26,16 @@ public class meeshoDashboardPage extends basePage{
 	}
 	
 	@FindBy(xpath ="//input[@name='emailOrPhone']") 
-	WebElement username;
+	protected WebElement username;
 	
 	@FindBy(id="loginbutton") 
-	WebElement loginbutton;
+	protected WebElement loginbutton;
 	
 	@FindBy(xpath ="//input[@name='password']") 
-	WebElement password;
+	protected WebElement password;
 	
 	@FindBy(xpath ="//button[@type='submit']") 
-	WebElement LoginSubmit;
+	protected WebElement LoginSubmit;
 	
 	
 }

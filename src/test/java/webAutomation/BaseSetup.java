@@ -2,12 +2,17 @@ package webAutomation;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.aspectj.util.FileUtil;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.TakesScreenshot;
@@ -35,23 +40,29 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 
 import MobilePagePackage.mobileAppPage;
-import WebPagePackage.meeshoDashboardPage;
-import WebPagePackage.meeshoHomePage;
+import WebPagePackage.DashboardPage;
+import WebPagePackage.HomePage;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.service.local.AppiumDriverLocalService;
+import io.appium.java_client.service.local.AppiumServiceBuilder;
+import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class BaseSetup {
 
 	public static WebDriver driver=null;
 	public static WebDriverWait wait;
-	public meeshoDashboardPage dp ;
-	public meeshoHomePage hp;
+	public DashboardPage dp ;
+	public HomePage hp;
 	public mobileAppPage mobileAppPage;
 	
-	public ExtentTest test;
-	public ExtentReports report;
-
+	public static ExtentTest test;
+	public static ExtentReports report;
+	static AppiumDriverLocalService service;
+	static AppiumServiceBuilder builder;
+	static DesiredCapabilities caps;
+	
 	public BaseSetup() {
 
 	}
@@ -93,7 +104,7 @@ public class BaseSetup {
 
 
 	public static void androidDriver() throws MalformedURLException {
-		DesiredCapabilities caps = new DesiredCapabilities();
+		caps = new DesiredCapabilities();
 		caps.setCapability("deviceName", "sdk_gphone_x86");
 		caps.setCapability("deviceId", "emulator-5554"); //DeviceId from "adb devices"
 		caps.setCapability("platformName", "Android");
@@ -102,26 +113,79 @@ public class BaseSetup {
 		caps.setCapability("platformVersion", "11.0");
 		caps.setCapability("app", "C:\\Users\\anshulm\\Downloads\\APKPure_v3.17.12_apkpure.com.apk");
         // caps.setCapability("noReset", "false");
+		startServer();
 		driver = new AndroidDriver<MobileElement>(new URL("http://127.0.0.1:4723/wd/hub"), caps);
+		
+	}
+	
+	public static boolean startServer() {
+	    //Build the Appium service
+	    builder = new AppiumServiceBuilder();
+	    builder.withIPAddress("127.0.0.1");
+	    builder.usingPort(4723);
+	    builder.withCapabilities(caps);
+	    builder.withArgument(GeneralServerFlag.SESSION_OVERRIDE);
+	    builder.withArgument(GeneralServerFlag.LOG_LEVEL,"error");
+
+	    //Start the server with the builder
+	    service = AppiumDriverLocalService.buildService(builder);
+	    service.start();
+	    return true;
+	}
+	
+	public static void stopServer() {
+	    service.stop();
+	}
+	
+	public static String captureBase64() throws IOException {
+        String encodedBase64 = null;
+        FileInputStream fileInputStream = null;
+        File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+        File Dest = new File("src/../BStackImages/" + System.currentTimeMillis()
+        + ".png");
+        String errflpath = Dest.getAbsolutePath();
+        FileUtils.copyFile(scrFile, Dest);
+         
+        try {
+            
+            fileInputStream =new FileInputStream(Dest);
+            byte[] bytes =new byte[(int)Dest.length()];
+            fileInputStream.read(bytes);
+            encodedBase64 = new String(Base64.encodeBase64(bytes));
+            System.out.println("Base64 screenshot captured");
+
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        return "data:image/png;base64,"+encodedBase64;
+        
+        
+        }
+	
+	public static String captureScreenShot(String fileName) {
+		TakesScreenshot ts=(TakesScreenshot)driver;
+		File source=ts.getScreenshotAs(OutputType.FILE);
+		File Dest = new File("Screenshots/"+fileName+".png");
+		try{
+			FileUtils.copyFile(source, Dest);
+			System.out.println("Screenshot taken");
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception while taking screenshot "+e.getMessage());
+		} 
+		return Dest.getAbsolutePath();
 	}
 
 	@AfterMethod
-	public void tearDown(ITestResult result) {
+	public void tearDown(ITestResult result) throws IOException {
 		if(ITestResult.FAILURE==result.getStatus())
 		{
-			TakesScreenshot ts=(TakesScreenshot)driver;
-			File source=ts.getScreenshotAs(OutputType.FILE);
-			report.endTest(test); 
 			test.log(LogStatus.FAIL,"Test Failed");
-			try{
-				FileHandler.copy(source, new File("./Screenshots/"+result.getName()+".png"));
-				System.out.println("Screenshot taken");
-			}
-			catch (Exception e)
-			{
-				System.out.println("Exception while taking screenshot "+e.getMessage());
-			} 
-
+		//	test.addBase64ScreenShot(captureBase64());
+			System.out.println(captureScreenShot("testName"));
+			test.addScreenCapture(captureScreenShot("testName"));
+			report.endTest(test);
 		}
 		else if(ITestResult.SUCCESS==result.getStatus())
 		{
@@ -138,6 +202,9 @@ public class BaseSetup {
 		}
 		report.flush();
 		driver.quit();
+		if(startServer()==true) {
+		stopServer();
+		}
 	}
 	
 	@AfterSuite

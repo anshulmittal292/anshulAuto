@@ -8,9 +8,9 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 
-public class meeshoHomePage {
+public class HomePage {
 
-	public meeshoHomePage(WebDriver driver)throws Exception {
+	public HomePage(WebDriver driver)throws Exception {
 		super();
 		PageFactory.initElements(driver,this);
 	}
