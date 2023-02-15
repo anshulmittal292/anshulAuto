@@ -7,12 +7,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.aspectj.util.FileUtil;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.TakesScreenshot;
@@ -23,10 +26,13 @@ import utilities.webUtilities;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.touch.TouchActions;
 import org.openqa.selenium.io.FileHandler;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
@@ -42,8 +48,11 @@ import com.relevantcodes.extentreports.LogStatus;
 import MobilePagePackage.mobileAppPage;
 import WebPagePackage.DashboardPage;
 import WebPagePackage.HomePage;
+import apiAutomation.restAssuredAPITesting;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.pagefactory.AppiumFieldDecorator;
+import io.appium.java_client.remote.AndroidMobileCapabilityType;
 import io.appium.java_client.service.local.AppiumDriverLocalService;
 import io.appium.java_client.service.local.AppiumServiceBuilder;
 import io.appium.java_client.service.local.flags.GeneralServerFlag;
@@ -56,6 +65,7 @@ public class BaseSetup {
 	public DashboardPage dp ;
 	public HomePage hp;
 	public mobileAppPage mobileAppPage;
+	public restAssuredAPITesting restApi;
 	
 	public static ExtentTest test;
 	public static ExtentReports report;
@@ -90,9 +100,18 @@ public class BaseSetup {
 
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void chromeDriver() {
 		WebDriverManager.chromedriver().setup();
-         driver = new ChromeDriver();
+		String downloadFilepath = System.getProperty("user.dir") + "\\downloadedFiles";
+		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
+		chromePrefs.put("download.default_directory", downloadFilepath);
+		ChromeOptions options = new ChromeOptions();
+		options.setExperimentalOption("prefs", chromePrefs);
+		DesiredCapabilities cap = new DesiredCapabilities();
+		cap.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+		cap.setCapability(ChromeOptions.CAPABILITY, options);
+        driver = new ChromeDriver(cap);
 
 	}
 
@@ -105,16 +124,18 @@ public class BaseSetup {
 
 	public static void androidDriver() throws MalformedURLException {
 		caps = new DesiredCapabilities();
-		caps.setCapability("deviceName", "sdk_gphone_x86");
+		caps.setCapability("deviceName", "PixelEmulator");
 		caps.setCapability("deviceId", "emulator-5554"); //DeviceId from "adb devices"
 		caps.setCapability("platformName", "Android");
 		caps.setCapability("automationName", "UiAutomator2");
-		caps.setCapability("appPackage","com.google.android.permissioncontroller");
-		caps.setCapability("platformVersion", "11.0");
-		caps.setCapability("app", "C:\\Users\\anshulm\\Downloads\\APKPure_v3.17.12_apkpure.com.apk");
-        // caps.setCapability("noReset", "false");
-		startServer();
+		caps.setCapability("packageName","com.swaglabsmobileapp");
+		caps.setCapability("platformVersion", "12.0");
+        caps.setCapability("noReset", "true");
+	//	startServer();
 		driver = new AndroidDriver<MobileElement>(new URL("http://127.0.0.1:4723/wd/hub"), caps);
+	//	driver = new RemoteWebDriver(new URL("http://127.0.0.1:4723/wd/hub"), caps);
+		
+	//	PageFactory.initElements(new AppiumFieldDecorator(driver), mobileAppPage.class);
 		
 	}
 	
@@ -176,6 +197,14 @@ public class BaseSetup {
 		} 
 		return Dest.getAbsolutePath();
 	}
+	
+	public static void scrollAndroid(MobileElement element) {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+	    HashMap<String, String> scrollObject = new HashMap<String, String>();
+	    scrollObject.put("direction", "down");
+	    js.executeScript("mobile: scroll", scrollObject);
+
+	}
 
 	@AfterMethod
 	public void tearDown(ITestResult result) throws IOException {
@@ -202,16 +231,16 @@ public class BaseSetup {
 		}
 		report.flush();
 		driver.quit();
-		if(startServer()==true) {
-		stopServer();
-		}
+//		if(startServer()==true) {
+//		stopServer();
+		
 	}
 	
 	@AfterSuite
 	public void quitDriver() {
 		System.out.println("aftersuite");
 		try {
-		//	driver.quit();
+			driver.quit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

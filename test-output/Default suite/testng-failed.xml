@@ -3,15 +3,13 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="webAutomation.NewTestTest">
+      <class name="webAutomation.shadowElements">
         <methods>
-          <include name="quitDriver"/>
+          <include name="openAnyWhereTest2"/>
+          <include name="setBrowser"/>
           <include name="tearDown"/>
-          <include name="setup"/>
-          <include name="reportSetup"/>
-          <include name="validatePageTitle1"/>
         </methods>
-      </class> <!-- webAutomation.NewTestTest -->
+      </class> <!-- webAutomation.shadowElements -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->
